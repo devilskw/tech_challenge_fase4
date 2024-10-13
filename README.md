@@ -1,7 +1,9 @@
 # Tech Challenge - Fase 4
 
+
 ## Turma
 Grupo 16
+
 
 ### Integrantes
 
@@ -17,17 +19,19 @@ kazuo_w@hotmail.com
 Samuel Rodrigues de Barros Mesquita Neto
 samuelr.neto98@gmail.com
 
+
 ## Sobre o desafio
 
 O Tech Challenge desta fase será a criação de uma aplicação que utilize análise de vídeo, através de técnicas de reconhecimento facial, análise de expressões emocionais em vídeos e detecção de atividades.
 
-### Tarefas que o projeto precisa realizar:
 
+### Tarefas que o projeto precisa realizar:
 
 1. Reconhecimento facial: Identifique e marque os rostos presentes no vídeo.
 2. Análise de expressões emocionais: Analise as expressões emocionais dos rostos identificados.
 3. Detecção de atividades: Detecte e categorize as atividades sendo realizadas no vídeo.
 4. Geração de resumo: Crie um resumo automático das principais atividades e emoções detectadas no vídeo.
+
 
 ## Entregáveis
 
@@ -38,6 +42,7 @@ O Tech Challenge desta fase será a criação de uma aplicação que utilize an�
 Observação: movimento anômalo não segue o padrão geral de atividades (como gestos bruscos ou comportamentos atípicos) esses são classificados como anômalos.
 3. Demonstração em Vídeo: um vídeo demonstrando a aplicação em funcionamento, evidenciando cada uma das funcionalidades implementadas.
 
+
 ## Nosso projeto
 
 Este projeto será estruturado da seguinte forma:
@@ -46,6 +51,8 @@ Este projeto será estruturado da seguinte forma:
 - Apesar de não ser uma boa prática de clean code, é possível que implementemos documentação a fim de apoiar nas explicações e/ou motivações para as ações e configurações, para fins acadêmicos;
 - Na estrutura de pastas de **assets** conterá os materiais e arquivos de apoio ao projeto. Também será onde iremos gerar as resultantes (relatórios) da execução;
 
+## Documentação de apoio de
 
-
-
+- [OpenCV](https://docs.opencv.org/4.x/)
+- [DeepFace](https://github.com/serengil/deepface)
+# - [tqdm](https://tqdm.github.io/)
