@@ -6,7 +6,6 @@
 #
 absl-py==2.1.0
     # via
-    #   keras
     #   tensorboard
     #   tensorflow-intel
 astunparse==1.6.3
@@ -62,9 +61,7 @@ grpcio==1.66.2
 gunicorn==23.0.0
     # via deepface
 h5py==3.12.1
-    # via
-    #   keras
-    #   tensorflow-intel
+    # via tensorflow-intel
 idna==3.10
     # via requests
 itsdangerous==2.2.0
@@ -93,7 +90,6 @@ numpy==1.26.4
     # via
     #   deepface
     #   h5py
-    #   ml-dtypes
     #   opencv-contrib-python
     #   opencv-python
     #   opencv-python-headless
@@ -175,9 +171,7 @@ tensorflow-estimator==2.11.0
 tensorflow-intel==2.11.1
     # via tensorflow
 tensorflow-io-gcs-filesystem==0.31.0
-    # via
-    #   tensorflow
-    #   tensorflow-intel
+    # via tensorflow-intel
 termcolor==2.5.0
     # via
     #   fire
@@ -187,10 +181,7 @@ tqdm==4.66.5
     #   deepface
     #   gdown
 typing-extensions==4.12.2
-    # via
-    #   optree
-    #   rich
-    #   tensorflow-intel
+    # via tensorflow-intel
 tzdata==2024.2
     # via pandas
 urllib3==2.2.3
