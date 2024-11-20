@@ -1,0 +1,11 @@
+{
+  "general": {
+    "path_in": "assets\\videos\\in",
+    "path_out": "assets\\videos\\out"
+  },
+  "video": {
+    "extension": ".mp4",
+    "filename": "Unlocking Facial Recognition_ Diverse Activities Analysis.mp4"
+  }
+}
+
