@@ -25,7 +25,7 @@ class MyRecognizer:
     self.log = logging.getLogger(__name__)
 
   def analyze(self, video_filename: str):
-    _wait_key = 10 if self.webcam else 1
+    _wait_key = 1 if self.webcam else 1
     _input = 0 if self.webcam else os.path.join(self.path_in, video_filename)
     id_frame = 0
 
@@ -40,11 +40,11 @@ class MyRecognizer:
       height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
       fps=int(cap.get(cv2.CAP_PROP_FPS)),
       total_frames=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)),
-      codec = int(cap.get(cv2.CAP_PROP_FOURCC))
+      codec = cv2.VideoWriter_fourcc(*'mp4v') # int(cap.get(cv2.CAP_PROP_FOURCC))
     )
 
     self.log.debug('Criando o objeto VideoWriter.')
-    out = cv2.VideoWriter(filename=self.path_out, fourcc=_prop.codec, fps=_prop.fps, frameSize=(_prop.width, _prop.height))
+    out = cv2.VideoWriter(filename=os.path.join(self.path_out, video_filename), fourcc=_prop.codec, fps=_prop.fps, frameSize=(_prop.width, _prop.height))
 
     self.log.debug('Iniciando a class de análise de rostos.')
     face_analyzer = FaceAnalyzer(self.cfg['analyzers']['face_analyzer'],  _prop)
@@ -53,16 +53,19 @@ class MyRecognizer:
       while cap.isOpened():
         id_frame += 1
 
-        if id_frame > 50: # webcam era somente para testes, por isso limitado em 25 frames
-          break
+        # if id_frame > 500: # webcam era somente para testes, por isso limitado em 25 frames
+        #   break
 
         ret, frame = self.__read_frame__(id_frame, cap)
         if not ret:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
-        frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename)
+        frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, True)
         out = self.__save_video__(out, frame)
-        if cv2.waitKey(_wait_key) & 0xFF == ord('q'):
+        cv2.imshow("Teste webcam", frame)
+        print("cv2.WND_PROP_VISIBLE ------------------------------")
+        print(cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE))
+        if cv2.waitKey(_wait_key) == 27 or cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE) < 1: # esc key pressed
           break
     else:
       self.log.info(f"Total de frames que serão analisados: {_prop.total_frames}")
@@ -74,8 +77,8 @@ class MyRecognizer:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
 
-        if not self.cfg['test'] or (self.cfg['test'] and id_frame %50 ==0): # todo video para testes, por issolimitado analisar a cada 25 frames
-          frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename)
+        if not self.cfg['test'] or (self.cfg['test'] and (id_frame % 12 == 0)): # todo video para testes, por issolimitado analisar a cada 25 frames
+          frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, False)
 
         out = self.__save_video__(out, frame)
         if cv2.waitKey(_wait_key) & 0xFF == ord('q'):
@@ -88,7 +91,7 @@ class MyRecognizer:
     self.log.debug(f"Lendo o frame {id_frame} do vídeo.")
     return cap.read()
 
-  def __analyze_frame__(self, id_frame, frame: MatLike, face_analyzer: FaceAnalyzer, gesture_analyzer: GestureAnalyzer, video_filename):
+  def __analyze_frame__(self, id_frame, frame: MatLike, face_analyzer: FaceAnalyzer, gesture_analyzer: GestureAnalyzer, video_filename, webcam: bool):
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     #TODO frame, faces = face_analyzer.analyze(frame, id_frame, image)
     frame, gestures, landmks = gesture_analyzer.analyze(frame, id_frame, image)
@@ -96,12 +99,18 @@ class MyRecognizer:
     report_file = video_filename.replace(".mp4", ".csv")
     generate_validation_frame_image = 0
     #TODO generate_validation_frame_image += self.__append_faces_report__(report_file.replace(".csv", "_faces.csv"), id_frame, faces, first_row = id_frame == 1)
-    self.__append_poses_report__(report_file.replace(".csv", "_poses_landmarks.csv"), id_frame, landmks, first_row = id_frame == 1)
-    generate_validation_frame_image += self.__append_gestures_report__(report_file.replace(".csv", "_gestures.csv"), id_frame, gestures, first_row = id_frame == 1)
+    self.__append_poses_report__(report_file.replace(".csv", "_poses_landmarks.csv"), id_frame, landmks, id_frame == 1)
+    generate_validation_frame_image += self.__append_gestures_report__(report_file.replace(".csv", "_gestures.csv"), id_frame, gestures, id_frame == 1)
 
     if generate_validation_frame_image > 0:
-      image_frame_file = video_filename.replace(".mp4", f"_{id_frame}.png")
-      self.__save_video_image__(image_frame_file, frame)
+      if webcam:
+        x = 10
+        y= 30
+        for gesture in gestures:
+          cv2.putText(frame, gesture['gesture_description'],(x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+          y+= 10
+    image_frame_file = video_filename.replace(".mp4", f"_{id_frame}.png")
+    self.__save_video_image__(image_frame_file, frame)
     return frame
 
   def __append_faces_report__(self, filename, id_frame, faces, first_row = False):
