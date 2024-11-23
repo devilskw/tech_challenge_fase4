@@ -52,10 +52,6 @@ class MyRecognizer:
     if self.webcam:
       while cap.isOpened():
         id_frame += 1
-
-        # if id_frame > 500: # webcam era somente para testes, por isso limitado em 25 frames
-        #   break
-
         ret, frame = self.__read_frame__(id_frame, cap)
         if not ret:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
@@ -63,8 +59,6 @@ class MyRecognizer:
         frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, True)
         out = self.__save_video__(out, frame)
         cv2.imshow("Teste webcam", frame)
-        print("cv2.WND_PROP_VISIBLE ------------------------------")
-        print(cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE))
         if cv2.waitKey(_wait_key) == 27 or cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE) < 1: # esc key pressed
           break
     else:
@@ -77,7 +71,7 @@ class MyRecognizer:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
 
-        if not self.cfg['test'] or (self.cfg['test'] and (id_frame % 12 == 0)): # todo video para testes, por issolimitado analisar a cada 25 frames
+        if not self.cfg['test'] or (self.cfg['test'] and (id_frame % 12 == 0)):
           frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, False)
 
         out = self.__save_video__(out, frame)
@@ -93,12 +87,12 @@ class MyRecognizer:
 
   def __analyze_frame__(self, id_frame, frame: MatLike, face_analyzer: FaceAnalyzer, gesture_analyzer: GestureAnalyzer, video_filename, webcam: bool):
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    #TODO frame, faces = face_analyzer.analyze(frame, id_frame, image)
+    frame, faces = face_analyzer.analyze(frame, id_frame, image)
     frame, gestures, landmks = gesture_analyzer.analyze(frame, id_frame, image)
 
     report_file = video_filename.replace(".mp4", ".csv")
     generate_validation_frame_image = 0
-    #TODO generate_validation_frame_image += self.__append_faces_report__(report_file.replace(".csv", "_faces.csv"), id_frame, faces, first_row = id_frame == 1)
+    generate_validation_frame_image += self.__append_faces_report__(report_file.replace(".csv", "_faces.csv"), id_frame, faces, first_row = id_frame == 1)
     self.__append_poses_report__(report_file.replace(".csv", "_poses_landmarks.csv"), id_frame, landmks, id_frame == 1)
     generate_validation_frame_image += self.__append_gestures_report__(report_file.replace(".csv", "_gestures.csv"), id_frame, gestures, id_frame == 1)
 
