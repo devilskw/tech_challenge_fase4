@@ -5,6 +5,7 @@ from cv2.typing import MatLike
 from tqdm import tqdm
 
 from pos_ai_video_analyzer.analyzers.face_analyzer import FaceAnalyzer
+from pos_ai_video_analyzer.analyzers.gesture_analyzer import GestureAnalyzer
 from pos_ai_video_analyzer.video_properties import VideoProperties
 from utils.csv import CsvUtils
 
@@ -47,34 +48,35 @@ class MyRecognizer:
 
     self.log.debug('Iniciando a class de análise de rostos.')
     face_analyzer = FaceAnalyzer(self.cfg['analyzers']['face_analyzer'],  _prop)
+    gesture_analyzer = GestureAnalyzer(self.cfg['analyzers']['gesture_analyzer'],  _prop)
     if self.webcam:
       while cap.isOpened():
         id_frame += 1
 
-        if id_frame > 25: # webcam era somente para testes, por isso limitado em 25 frames
+        if id_frame > 50: # webcam era somente para testes, por isso limitado em 25 frames
           break
 
         ret, frame = self.__read_frame__(id_frame, cap)
         if not ret:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
-        frame = self.__analyze_frame__(id_frame, frame, face_analyzer)
-        self.__save_video__(out, frame)
+        frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename)
+        out = self.__save_video__(out, frame)
         if cv2.waitKey(_wait_key) & 0xFF == ord('q'):
           break
     else:
       for _ in tqdm(range(_prop.total_frames), desc="Percentual de processamento do vídeo"):
         id_frame += 1
 
-        if self.cfg['test'] and id_frame > 100: # webcam era somente para testes, por isso limitado em 25 frames
-          break
-
         ret, frame = self.__read_frame__(id_frame, cap)
         if not ret:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
-        frame = self.__analyze_frame__(id_frame, frame, face_analyzer, video_filename)
-        self.__save_video__(out, frame)
+
+        if not self.cfg['test'] or (self.cfg['test'] and id_frame % 25 == 0): # todo video para testes, por issolimitado analisar a cada 25 frames
+          frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename)
+
+        out = self.__save_video__(out, frame)
         if cv2.waitKey(_wait_key) & 0xFF == ord('q'):
           break
     out.release()
@@ -85,25 +87,55 @@ class MyRecognizer:
     self.log.debug(f"Lendo o frame {id_frame} do vídeo.")
     return cap.read()
 
-  def __analyze_frame__(self, id_frame, frame: MatLike, face_analyzer: FaceAnalyzer, video_filename):
+  def __analyze_frame__(self, id_frame, frame: MatLike, face_analyzer: FaceAnalyzer, gesture_analyzer: GestureAnalyzer, video_filename):
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame, faces = face_analyzer.analyze(frame, id_frame, image)
+    #TODO frame, faces = face_analyzer.analyze(frame, id_frame, image)
+    frame, gestures, landmks = gesture_analyzer.analyze(frame, id_frame, image)
 
     report_file = video_filename.replace(".mp4", ".csv")
-    self.__append_report__(report_file, id_frame, faces, first_row = id_frame == 1)
-    image_frame_file = video_filename.replace(".mp4", f"_{id_frame}.png")
-    self.__save_video_image__(image_frame_file, frame)
+    generate_validation_frame_image = 0
+    #TODO generate_validation_frame_image += self.__append_faces_report__(report_file.replace(".csv", "_faces.csv"), id_frame, faces, first_row = id_frame == 1)
+    self.__append_poses_report__(report_file.replace(".csv", "_poses_landmarks.csv"), id_frame, landmks, first_row = id_frame == 1)
+    generate_validation_frame_image += self.__append_gestures_report__(report_file.replace(".csv", "_gestures.csv"), id_frame, gestures, first_row = id_frame == 1)
+
+    if generate_validation_frame_image > 0:
+      image_frame_file = video_filename.replace(".mp4", f"_{id_frame}.png")
+      self.__save_video_image__(image_frame_file, frame)
     return frame
 
-  def __append_report__(self, filename, id_frame, faces, first_row = False):
+  def __append_faces_report__(self, filename, id_frame, faces, first_row = False):
     data = []
     header = ['id_frame', 'id_face', 'emotion', 'pos_x', 'pos_y', 'width', 'height']
     if (first_row):
       data.append(header)
+    qtde_emotions = 0
     for face in faces:
       data.append([id_frame, face['id_face'], face['emotion'], face['pos_x'], face['pos_y'], face['width'], face['height']])
+      if face['emotion'] != 'unknown': qtde_emotions += 1
     csv_file = os.path.join(self.path_out, filename)
     CsvUtils.save_csv(csv_file, data, first_row)
+    return qtde_emotions
+
+  def __append_poses_report__(self, filename, id_frame, gestures, first_row = False):
+    data = []
+    header = ['id_frame', 'pose_id', 'pose', 'pose_ptbr', 'pos_x', 'pos_y', 'visibility']
+    if (first_row):
+      data.append(header)
+    for gesture in gestures:
+      data.append([id_frame, gesture['pose_id'], gesture['pose'], gesture['pose_ptbr'], gesture['x'], gesture['y'], gesture['z'], gesture['visibility']])
+    csv_file = os.path.join(self.path_out, filename)
+    CsvUtils.save_csv(csv_file, data, first_row)
+
+  def __append_gestures_report__(self, filename, id_frame, gestures, first_row = False):
+    data = []
+    header = ['id_frame', 'id_gesture', 'gesture_name', 'gesture_description']
+    if (first_row):
+      data.append(header)
+    for gesture in gestures:
+      data.append([id_frame, gesture['id_gesture'], gesture['gesture_name'], gesture['gesture_description']])
+    csv_file = os.path.join(self.path_out, filename)
+    CsvUtils.save_csv(csv_file, data, first_row)
+    return len(gestures)
 
   def __save_video_image__(self, filename, frame):
     img_file = os.path.join(self.path_out, filename)
@@ -112,3 +144,4 @@ class MyRecognizer:
   def __save_video__(self, out: cv2.VideoWriter, frame: MatLike):
     self.log.debug('Escrevendo o frame processado com landmark no vídeo de saída.')
     out.write(frame)
+    return out

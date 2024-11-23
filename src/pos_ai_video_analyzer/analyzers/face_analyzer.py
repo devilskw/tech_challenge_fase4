@@ -50,7 +50,7 @@ class FaceAnalyzer(Analyzer):
     return emotion
 
   def __get_face_box_positions__(self, frame: MatLike, detection) -> MatLike:
-    height, width, c = frame.shape
+    height, width, _ = frame.shape
     box = detection.location_data.relative_bounding_box
     bbox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
     return bbox
