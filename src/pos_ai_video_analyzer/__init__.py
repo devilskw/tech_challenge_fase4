@@ -65,6 +65,7 @@ class MyRecognizer:
         if cv2.waitKey(_wait_key) & 0xFF == ord('q'):
           break
     else:
+      self.log.info(f"Total de frames que serão analisados: {_prop.total_frames}")
       for _ in tqdm(range(_prop.total_frames), desc="Percentual de processamento do vídeo"):
         id_frame += 1
 
@@ -73,7 +74,7 @@ class MyRecognizer:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
 
-        if not self.cfg['test'] or (self.cfg['test'] and id_frame % 25 == 0): # todo video para testes, por issolimitado analisar a cada 25 frames
+        if not self.cfg['test'] or (self.cfg['test'] and id_frame %50 ==0): # todo video para testes, por issolimitado analisar a cada 25 frames
           frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename)
 
         out = self.__save_video__(out, frame)
