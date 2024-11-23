@@ -92,3 +92,12 @@ class RegraFazendoPoisSeMaoEsquerda(GestureRule):
         and lndmk[PoseLandmark.LEFT_WRIST].y + 0.5 <= lndmk[PoseLandmark.LEFT_PINKY].y + 0.5 \
       else GestureRuleResult(False, '-', '-')
 
+class RegraDeitadoParaDireita(GestureRule):
+  def validate(self, lndmk):
+    return GestureRuleResult(True, 'DEITADO_PARA_DIREITA', 'Posicao deitado ou horizontal para a direita') \
+      if not self.desconsiderar_validateavaliacao_regra(lndmk, [
+        PoseLandmark.RIGHT_HIP, PoseLandmark.RIGHT_SHOULDER
+      ]) \
+        and lndmk[PoseLandmark.RIGHT_HIP].y >= lndmk[PoseLandmark.RIGHT_SHOULDER].y \
+        and lndmk[PoseLandmark.RIGHT_HIP].x < lndmk[PoseLandmark.RIGHT_SHOULDER].y \
+      else GestureRuleResult(False, '-', '-')

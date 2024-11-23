@@ -132,7 +132,8 @@ class MyRecognizer:
     if (first_row):
       data.append(header)
     for gesture in gestures:
-      data.append([id_frame, gesture['id_gesture'], gesture['gesture_name'], gesture['gesture_description']])
+      if 'id_gesture' in gesture and 'gesture_name' in gesture and 'gesture_description' in gesture:
+        data.append([id_frame, gesture['id_gesture'], gesture['gesture_name'], gesture['gesture_description']])
     csv_file = os.path.join(self.path_out, filename)
     CsvUtils.save_csv(csv_file, data, first_row)
     return len(gestures)

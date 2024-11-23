@@ -86,5 +86,5 @@ class GestureAnalyzer(Analyzer):
         , 'gesture_name': rules[ix].name
         , 'gesture_description': rules[ix].description
       })
-    return rules
+    return gestures
 
