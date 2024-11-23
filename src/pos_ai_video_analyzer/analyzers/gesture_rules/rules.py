@@ -41,10 +41,10 @@ class RegraBracoEsquerdoLevantado(GestureRule):
         or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
       ):
 
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x < lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO', 'Braço lado esquerdo levantado')
+      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
+        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO_DE_COSTAS', 'Braço lado esquerdo levantado (de costas)')
       else:
-        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO_DE_COSTAS', 'Braço lado direito levantado (de costas)')
+        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO', 'Braço lado direito levantado')
     return GestureRuleResult(False, '-', '-')
 
 
@@ -59,10 +59,10 @@ class RegraBracoDireitoLevantado(GestureRule):
               lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
           or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
         ):
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x < lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO', 'Braço lado direito levantado')
+      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
+        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO_DE_COSTAS', 'Braço lado direito levantado(de costas)')
       else:
-        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO_DE_COSTAS', 'Braço lado esquerdo levantado (de costas)')
+        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO', 'Braço lado esquerdo levantado')
     return GestureRuleResult(False, '-', '-')
 
 class RegraAmbosBracosLevantados(GestureRule):
@@ -78,10 +78,10 @@ class RegraAmbosBracosLevantados(GestureRule):
               lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
           or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
         ):
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x < lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACOS_LEVANTADOS', 'Braços levantados')
-      else:
+      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
         return GestureRuleResult(True, 'BRACOS_LEVANTADOS_DE_COSTA', 'Braços levantados (de costa)')
+      else:
+        return GestureRuleResult(True, 'BRACOS_LEVANTADOS', 'Braços levantados')
     return GestureRuleResult(False, '-', '-')
 
 # class RegraFazendoPoisSeMaoDireita(GestureRule):
