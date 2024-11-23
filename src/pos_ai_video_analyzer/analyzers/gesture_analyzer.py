@@ -77,6 +77,8 @@ class GestureAnalyzer(Analyzer):
     mp_draw_utils.draw_landmarks(frame, detections, conn)
 
   def __identify_gestures__(self, id_frame, lndmk):
+    if id_frame == 2350:
+      print('opa')
     rules = self.gesture_rules.identify_gestures(lndmk)
     gestures = []
     for ix in range(len(rules)):
