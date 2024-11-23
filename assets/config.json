@@ -6,6 +6,9 @@
 	"analyzers":{
 		"face_analyzer":{
 			"min_detection_confidence": 0.5
+		},
+		"gesture_analyzer":{
+			"min_detection_confidence": 0.5
 		}
 	}
 }
