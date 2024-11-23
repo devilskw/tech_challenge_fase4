@@ -7,17 +7,17 @@ Grupo 16
 
 ### Integrantes
 
-Jonathan Maximo da Silva
-jonathan.desenv@gmail.com
-
-Michael Juvenal de Oliveira
-Michael.etec@gmail.com
-
 Samuel Kazuo Watanabe
 kazuo_w@hotmail.com
 
+Jonathan Maximo da Silva
+jonathan.desenv@gmail.com
+
 Samuel Rodrigues de Barros Mesquita Neto
 samuelr.neto98@gmail.com
+
+Michael Juvenal de Oliveira
+Michael.etec@gmail.com
 
 
 ## Sobre o desafio
@@ -60,56 +60,52 @@ Um exemplo dele abaixo, para facilitar o entendimento:
 
 ```json
 {
-  "general": {
-    "path_in": "assets\\videos\\in",
-    "path_out": "assets\\videos\\out"
-  },
-  "video": {
-    "extension": ".mp4",
-    "filename": "Unlocking Facial Recognition_ Diverse Activities Analysis.mp4"
-  }
+	"path_in": "assets\\in",
+	"path_out": "assets\\out",
+	"webcam": false,
+	"test": true,
+	"analyzers":{
+		"face_analyzer":{
+			"min_detection_confidence": 0.4
+		},
+		"gesture_analyzer":{
+			"min_detection_confidence": 0.4
+		}
+	}
 }
+
 ```
 
 | chave | descrição | obrigatório |
 | --- | --- | --- |
-| general | para agrupar configuracoes gerais do projeto | - |
-| general.path_in | caminho que indica os arquivos de entrada | S |
-| general.path_out | caminho que indica os arquivos de saída | S |
-| video | para agrupar configuracoes do video a ser analisado | - |
-| video.extension | extensão do(s) vídeo(s) que serão analisados | S |
-| video.filename | nome do arquivo de vídeo que será analisado | S |
+| path_in | caminho que indica os arquivos de entrada | S |
+| path_out | caminho que indica os arquivos de saída | S |
+| webcam | para testar com webcam | S |
+| test | se ligado gera dados e imagens por amostragem | S |
+| analyzers.face_analyzer.[min_detection_confidence](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/face_detection.md) | Vai entre 0 e 1, para o modelo considerar que o quanto a detecção considera sucesso | S |
+| analyzers.gesture_analyzer.[min_detection_confidence](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/pose.md) | Vai entre 0 e 1, para o modelo considerar que o quanto a detecção considera sucesso | S |
 
-#### FaceDetector - Analistar de Atividades e Expressões Faciais
-A idéia foi colcoar dentro desta classe a solução do projeto, para facilitar o uso dele.
+---
 
-Para utlizá-la, ao instanciar a classe será necessario passar alguns valores de parâmetros, conforme abaixo:
+## MyRecognizer: Video Analyzer
 
-| parâmetro | descrição | tipo | obrigatório |
-| --- | --- | --- | --- |
-| in_basepath | caminho que indica os arquivos de entrada | string | S |
-| out_basepath | caminho que indica os arquivos de saída | string | S |
-| video_extension | extensão do(s) vídeo(s) que serão analisados | string | S |
+Os passos e idéias principais para este projeto foram:
 
-Teremos o método público **detect**, onde deve ser informado o nome do arquivo de vídeo a ser analisado (**video_filename**). 
-
-Obs.: O arquivo de vídeo deverá estar na pasta equivalente ao **in_basepath**, e somente deve ser passado o nome do arquivo do vídeo (com a extensão) em **video_filename**
-
-##### Método detect
-
-O método irá usar a biblioteca **cv2** (OpenCV Python binary extension loader), que irá simplificar para a captura/leitura dos vídeo informado.
-
-Basicamente, estes seriam os passos:
-
-- O arquivo será lido, onde será possível pegar algumas propriedades que serão úteis para ser utilizadas mais para frente pelas demais bibliotecas;
-- Será feita a leitura do vídeo por frame, sedo que, para cada captura, será analisada as expressões (método **__analyse_expressions**), passando o frame e seu identificador
-- Será analisada ações frame-a-frame, onde será identificada e analisada as expressões faciais nos vídeos.
-- Para este trabalho, iremos gravar um relatório das emoções identificadas com identificadores do frame (**__add_frame_emotion_report__**) , e serão geradas por amostragem algumas imagens do frame (**__generate_image__**), visando para apoiar este trabalho.
-- Após isso será gravado o frame no novo vídeo.
+- Ler algumas configuarações para a aplicação de **assetcs/config.json**
+- ler o video que estaria em **assets/in**
+- todo arquivo de output gravar em **assets/out**
+- fazer a detecção e análise facial de emoções
+- gravar as coordenadas no vídeo
+- gerando um relatório e algumas imagens de amostragem
+- fazer a detecção e análise de atividades/gestos
+- possibilitar criar regras (e aumentar no futuro) para possíveis gestos (braço levantado, deitado, etc)
+- gravar as coordenadas das [posições](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=pt-br) no vídeo
+- gerando um relatório das posições e dos gestos separados e algumas imagens de amostragem
 
 
-## Documentação de apoio de
+### Documentação de apoio de
 
 - [OpenCV](https://docs.opencv.org/4.x/)
 - [DeepFace](https://github.com/serengil/deepface)
-
+- [Pose Landmarks](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=pt-br)
+- [PoseLandmark.Type](https://developers.google.com/android/reference/com/google/mlkit/vision/pose/PoseLandmark.Type)
