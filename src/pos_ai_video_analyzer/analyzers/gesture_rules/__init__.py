@@ -7,9 +7,7 @@ from pos_ai_video_analyzer.analyzers.gesture_rules.rules import *
 class GestureRules:
   gesture_rules: list[GestureRule] = []
   def __init__(self):
-    self.gesture_rules.append(RegraBracoEsquerdoLevantado())
-    self.gesture_rules.append(RegraBracoDireitoLevantado())
-    self.gesture_rules.append(RegraAmbosBracosLevantados())
+    self.gesture_rules.append(RegraBracoLevantado())
     self.gesture_rules.append(RegraDeitado())
 
   def identify_gestures(self, lndmk) -> list[GestureRuleResult]:

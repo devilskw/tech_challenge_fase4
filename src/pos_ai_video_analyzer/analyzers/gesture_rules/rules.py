@@ -23,95 +23,41 @@ class GestureRule(ABC):
   def desconsiderar_validateavaliacao_regra(self, lndmk, poselandmarks = []):
     desconsiderar = False
     for poselandmark in poselandmarks:
-      if lndmk[poselandmark].visibility > 1.0000 or lndmk[poselandmark].visibility < 0.8000:
+      if lndmk[poselandmark].visibility > 1.0000 or lndmk[poselandmark].visibility < 0.35:
         desconsiderar = True
     return desconsiderar
 
 # Implementacao das Regras
 
-class RegraBracoEsquerdoLevantado(GestureRule):
+class RegraBracoLevantado(GestureRule):
   def validate(self, lndmk):
-    if not self.desconsiderar_validateavaliacao_regra(lndmk, [
+    grau_satisfacao_regra = 0.08
+    if ( not self.desconsiderar_validateavaliacao_regra(lndmk, [
         PoseLandmark.LEFT_ELBOW, PoseLandmark.LEFT_SHOULDER, PoseLandmark.LEFT_WRIST]) \
-      and lndmk[PoseLandmark.LEFT_ELBOW].y > lndmk[PoseLandmark.LEFT_SHOULDER].y \
-      and lndmk[PoseLandmark.LEFT_WRIST].y > lndmk[PoseLandmark.LEFT_ELBOW].y \
-      and lndmk[PoseLandmark.RIGHT_ELBOW].y <= lndmk[PoseLandmark.RIGHT_SHOULDER].y \
-      and (
-            lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
-        or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
-      ):
-
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO_DE_COSTAS', 'Braco lado esquerdo levantado (de costas)')
-      else:
-        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO', 'Braco lado direito levantado')
-    return GestureRuleResult(False, '-', '-')
-
-
-class RegraBracoDireitoLevantado(GestureRule):
-  def validate(self, lndmk):
-    if not self.desconsiderar_validateavaliacao_regra(lndmk, [
+      and ( # validar se corpo está na vertical (não está deitado)
+              (      lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y > 0.00 \
+                and  lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 ) \
+          or  (      lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y > 0.00 \
+                and  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 ) \
+        ) and ( 
+              lndmk[PoseLandmark.LEFT_WRIST].y + grau_satisfacao_regra >= lndmk[PoseLandmark.LEFT_SHOULDER].y \
+          or  (     lndmk[PoseLandmark.LEFT_ELBOW].y >= lndmk[PoseLandmark.LEFT_SHOULDER].y \
+               and  lndmk[PoseLandmark.LEFT_WRIST].y > lndmk[PoseLandmark.LEFT_ELBOW].y ) \
+        )) or ( \
+      not self.desconsiderar_validateavaliacao_regra(lndmk, [
         PoseLandmark.RIGHT_ELBOW, PoseLandmark.RIGHT_SHOULDER, PoseLandmark.RIGHT_WRIST]) \
-      and lndmk[PoseLandmark.RIGHT_ELBOW].y > lndmk[PoseLandmark.RIGHT_SHOULDER].y \
-      and lndmk[PoseLandmark.RIGHT_WRIST].y > lndmk[PoseLandmark.RIGHT_ELBOW].y \
-      and lndmk[PoseLandmark.LEFT_ELBOW].y <= lndmk[PoseLandmark.LEFT_SHOULDER].y \
-      and (
-              lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
-          or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
-        ):
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACO_LADO_DIREITO_LEVANTADO_DE_COSTAS', 'Braco lado direito levantado(de costas)')
-      else:
-        return GestureRuleResult(True, 'BRACO_LADO_ESQUERDO_LEVANTADO', 'Braco lado esquerdo levantado')
+      and ( # validar se corpo está na vertical (não está deitado)
+              (     lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y > 0.00 \
+               and  lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 ) \
+          or  (     lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y > 0.00 \
+               and  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 ) \
+        ) and ( # validar se pelo menos o pulso está mais alto que o ombro ou cotovelo
+              lndmk[PoseLandmark.RIGHT_WRIST].y + grau_satisfacao_regra> lndmk[PoseLandmark.RIGHT_SHOULDER].y \
+          or  (     lndmk[PoseLandmark.RIGHT_ELBOW].y > lndmk[PoseLandmark.RIGHT_SHOULDER].y \
+               and  lndmk[PoseLandmark.RIGHT_WRIST].y > lndmk[PoseLandmark.RIGHT_ELBOW].y ) \
+        )):
+      return GestureRuleResult(True, 'BRACO_LEVANTADO', 'Braco levantado')
     return GestureRuleResult(False, '-', '-')
-
-class RegraAmbosBracosLevantados(GestureRule):
-  def validate(self, lndmk):
-    if not self.desconsiderar_validateavaliacao_regra(lndmk, [
-        PoseLandmark.LEFT_ELBOW, PoseLandmark.LEFT_SHOULDER, PoseLandmark.LEFT_WRIST,
-        PoseLandmark.LEFT_ELBOW, PoseLandmark.RIGHT_ELBOW, PoseLandmark.RIGHT_SHOULDER]) \
-      and lndmk[PoseLandmark.LEFT_ELBOW].y > lndmk[PoseLandmark.LEFT_SHOULDER].y \
-      and lndmk[PoseLandmark.LEFT_WRIST].y > lndmk[PoseLandmark.LEFT_ELBOW].y \
-      and lndmk[PoseLandmark.RIGHT_ELBOW].y > lndmk[PoseLandmark.RIGHT_SHOULDER].y \
-      and lndmk[PoseLandmark.LEFT_ELBOW].y <= lndmk[PoseLandmark.LEFT_SHOULDER].y \
-      and (
-              lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
-          or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
-        ):
-      if lndmk[PoseLandmark.LEFT_SHOULDER].x > lndmk[PoseLandmark.RIGHT_SHOULDER].x:
-        return GestureRuleResult(True, 'BRACOS_LEVANTADOS_DE_COSTA', 'Bracos levantados (de costa)')
-      else:
-        return GestureRuleResult(True, 'BRACOS_LEVANTADOS', 'Bracos levantados')
-    return GestureRuleResult(False, '-', '-')
-
-# class RegraFazendoPoisSeMaoDireita(GestureRule):
-#   def validate(self, lndmk):
-#     return GestureRuleResult(True, 'POISE_MAO_DIREITA', 'Poisé com a mão direita') \
-#       if not self.desconsiderar_validateavaliacao_regra(lndmk, [
-#           PoseLandmark.RIGHT_THUMB, PoseLandmark.RIGHT_INDEX, PoseLandmark.RIGHT_PINKY,
-#           PoseLandmark.RIGHT_WRIST]) \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].y > lndmk[PoseLandmark.RIGHT_INDEX].y \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].x >= lndmk[PoseLandmark.RIGHT_INDEX].x \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].x - 0.1 <= lndmk[PoseLandmark.RIGHT_INDEX].x \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].y > lndmk[PoseLandmark.RIGHT_PINKY].y \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].x >= lndmk[PoseLandmark.RIGHT_PINKY].x \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].x - 0.1 <= lndmk[PoseLandmark.RIGHT_PINKY].x \
-#         and lndmk[PoseLandmark.RIGHT_THUMB].y > lndmk[PoseLandmark.RIGHT_WRIST].y \
-#         and lndmk[PoseLandmark.RIGHT_WRIST].y + 0.5 >= lndmk[PoseLandmark.RIGHT_PINKY].y \
-#       else GestureRuleResult(False, '-', '-')
-
-# class RegraFazendoPoisSeMaoEsquerda(GestureRule):
-#   def validate(self, lndmk):
-#     return GestureRuleResult(True, 'POISE_MAO_ESQUERDA', 'Poisé com a mão esquerda') \
-#       if not self.desconsiderar_validateavaliacao_regra(lndmk, [
-#           PoseLandmark.LEFT_THUMB, PoseLandmark.LEFT_INDEX, PoseLandmark.LEFT_PINKY,
-#           PoseLandmark.LEFT_WRIST]) \
-#         and lndmk[PoseLandmark.LEFT_THUMB].y > lndmk[PoseLandmark.LEFT_INDEX].y \
-#         and lndmk[PoseLandmark.LEFT_THUMB].y > lndmk[PoseLandmark.LEFT_PINKY].y \
-#         and lndmk[PoseLandmark.LEFT_THUMB].y > lndmk[PoseLandmark.LEFT_WRIST].y \
-#         and lndmk[PoseLandmark.LEFT_WRIST].y + 0.5 >= lndmk[PoseLandmark.LEFT_PINKY].y \
-#         and lndmk[PoseLandmark.LEFT_WRIST].y + 0.5 <= lndmk[PoseLandmark.LEFT_PINKY].y + 0.5 \
-#       else GestureRuleResult(False, '-', '-')
 
 class RegraDeitado(GestureRule):
   def validate(self, lndmk):
