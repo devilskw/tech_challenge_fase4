@@ -1,6 +1,5 @@
 # Tech Challenge - Fase 4
 
-
 ## Turma
 Grupo 16
 
@@ -101,7 +100,6 @@ Os passos e idéias principais para este projeto foram:
 - possibilitar criar regras (e aumentar no futuro) para possíveis gestos (braço levantado, deitado, etc)
 - gravar as coordenadas das [posições](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=pt-br) no vídeo
 - gerando um relatório das posições e dos gestos separados e algumas imagens de amostragem
-
 
 ### Documentação de apoio de
 
