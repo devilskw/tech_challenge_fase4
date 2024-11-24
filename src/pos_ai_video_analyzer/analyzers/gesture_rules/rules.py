@@ -65,8 +65,8 @@ class RegraDeitado(GestureRule):
       if not self.desconsiderar_validateavaliacao_regra(lndmk, [
         PoseLandmark.LEFT_SHOULDER, PoseLandmark.RIGHT_SHOULDER
       ]) \
-        and (     lndmk[PoseLandmark.LEFT_SHOULDER].x - lndmk[PoseLandmark.RIGHT_SHOULDER].y <= 0.2 \
-              or  lndmk[PoseLandmark.RIGHT_SHOULDER].x - lndmk[PoseLandmark.LEFT_SHOULDER].y <= 0.2 \
+        and (     lndmk[PoseLandmark.LEFT_SHOULDER].x - lndmk[PoseLandmark.RIGHT_SHOULDER].x <= 0.2 \
+              or  lndmk[PoseLandmark.RIGHT_SHOULDER].x - lndmk[PoseLandmark.LEFT_SHOULDER].x <= 0.2 \
         ) \
         and (     lndmk[PoseLandmark.LEFT_SHOULDER].y - lndmk[PoseLandmark.RIGHT_SHOULDER].y > 0.6 \
               or  lndmk[PoseLandmark.RIGHT_SHOULDER].y - lndmk[PoseLandmark.LEFT_SHOULDER].y > 0.6 \

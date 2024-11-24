@@ -71,7 +71,7 @@ class MyRecognizer:
           self.log.warning(f"Não foi possível ler o frame {id_frame} do vídeo. Saindo...")
           break
 
-        if not self.cfg['test'] or (self.cfg['test'] and (id_frame % 12 == 0)):
+        if not self.cfg['test'] or (self.cfg['test'] and (id_frame % 50 == 0)):
           frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, False)
 
         out = self.__save_video__(out, frame)
@@ -97,12 +97,15 @@ class MyRecognizer:
     generate_validation_frame_image += self.__append_gestures_report__(report_file.replace(".csv", "_gestures.csv"), id_frame, gestures, id_frame == 1)
 
     if generate_validation_frame_image > 0:
-      if webcam:
-        x = 10
-        y= 30
-        for gesture in gestures:
-          cv2.putText(frame, gesture['gesture_description'],(x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-          y+= 10
+      x = 10
+      y= 30
+      for gesture in gestures:
+        cv2.putText(frame, gesture['gesture_description'],(x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+        y+= 10
+      x = 50
+      y= 30
+      for face in faces:
+        cv2.putText(frame, face['emotion'],(x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
     image_frame_file = video_filename.replace(".mp4", f"_{id_frame}.png")
     self.__save_video_image__(image_frame_file, frame)
     return frame

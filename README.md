@@ -91,7 +91,7 @@ Um exemplo dele abaixo, para facilitar o entendimento:
 
 Os passos e idéias principais para este projeto foram:
 
-- Ler algumas configuarações para a aplicação de **assetcs/config.json**
+- Ler algumas configuarações para a aplicação de **assets/config.json**
 - ler o video que estaria em **assets/in**
 - todo arquivo de output gravar em **assets/out**
 - fazer a detecção e análise facial de emoções
