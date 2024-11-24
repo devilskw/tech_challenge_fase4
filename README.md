@@ -110,6 +110,11 @@ Os passos e idéias principais para este projeto foram:
 
 ```bash
 pip install -r requirements.txt
+
+---- ou então pode instalar um a um os pacotes, assim
+
+pip install opencv-python tqdm mediapipe deepface
+
 ```
 
 5. Ainda no prompt de comando ou bash, acesse a pasta src e execute o comando do python para iniciar a aplicação
