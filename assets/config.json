@@ -2,7 +2,7 @@
 	"path_in": "assets\\in",
 	"path_out": "assets\\out",
 	"webcam": false,
-	"test": true,
+	"test": false,
 	"analyzers":{
 		"face_analyzer":{
 			"min_detection_confidence": 0.4
