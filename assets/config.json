@@ -1,8 +1,9 @@
 {
+	"video_filename": "teste.mp4",
 	"path_in": "assets\\in",
 	"path_out": "assets\\out",
 	"webcam": false,
-	"test": false,
+	"test": true,
 	"analyzers":{
 		"face_analyzer":{
 			"min_detection_confidence": 0.4

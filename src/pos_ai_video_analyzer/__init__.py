@@ -40,7 +40,7 @@ class MyRecognizer:
       height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
       fps=int(cap.get(cv2.CAP_PROP_FPS)),
       total_frames=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)),
-      codec = cv2.VideoWriter_fourcc(*'mp4v') # int(cap.get(cv2.CAP_PROP_FOURCC))
+      codec = cv2.VideoWriter_fourcc(*'mp4v')
     )
 
     self.log.debug('Criando o objeto VideoWriter.')
@@ -59,7 +59,7 @@ class MyRecognizer:
         frame = self.__analyze_frame__(id_frame, frame, face_analyzer, gesture_analyzer, video_filename, True)
         out = self.__save_video__(out, frame)
         cv2.imshow("Teste webcam", frame)
-        if cv2.waitKey(_wait_key) == 27 or cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE) < 1: # esc key pressed
+        if cv2.waitKey(_wait_key) == 27 or cv2.getWindowProperty("Teste webcam", cv2.WND_PROP_VISIBLE) < 1: # esc key pressed == 27 ou fechar a janela
           break
     else:
       self.log.info(f"Total de frames que serão analisados: {_prop.total_frames}")

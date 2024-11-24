@@ -11,4 +11,4 @@ logging.basicConfig(level=logging.INFO)
 config = JsonUtils.load_json("assets/config.json")
 
 my_recognizer = MyRecognizer(config)
-my_recognizer.analyze('teste.mp4')
+my_recognizer.analyze(config['video_filename'])

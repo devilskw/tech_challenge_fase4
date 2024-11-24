@@ -59,6 +59,7 @@ Um exemplo dele abaixo, para facilitar o entendimento:
 
 ```json
 {
+	"video_filename": "test.mp4",
 	"path_in": "assets\\in",
 	"path_out": "assets\\out",
 	"webcam": false,
@@ -77,6 +78,7 @@ Um exemplo dele abaixo, para facilitar o entendimento:
 
 | chave | descrição | obrigatório |
 | --- | --- | --- |
+| video_filename | nome do arquivo de vídeo com a extensão (.mp4) | S |
 | path_in | caminho que indica os arquivos de entrada | S |
 | path_out | caminho que indica os arquivos de saída | S |
 | webcam | para testar com webcam | S |
@@ -110,6 +112,11 @@ Os passos e idéias principais para este projeto foram:
 
 ```bash
 pip install -r requirements.txt
+
+---- ou então pode instalar um a um os pacotes, assim
+
+pip install opencv-python tqdm mediapipe deepface
+
 ```
 
 5. Ainda no prompt de comando ou bash, acesse a pasta src e execute o comando do python para iniciar a aplicação
