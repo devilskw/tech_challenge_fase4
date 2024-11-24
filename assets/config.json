@@ -1,0 +1,15 @@
+{
+	"path_in": "assets\\in",
+	"path_out": "assets\\out",
+	"webcam": false,
+	"test": true,
+	"analyzers":{
+		"face_analyzer":{
+			"min_detection_confidence": 0.4
+		},
+		"gesture_analyzer":{
+			"min_detection_confidence": 0.4
+		}
+	}
+}
+
