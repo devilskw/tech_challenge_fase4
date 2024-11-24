@@ -101,6 +101,26 @@ Os passos e idéias principais para este projeto foram:
 - gravar as coordenadas das [posições](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=pt-br) no vídeo
 - gerando um relatório das posições e dos gestos separados e algumas imagens de amostragem
 
+## Como rodo o projeto?
+
+1. Copie o arquivo de vídeo (de preferência, renomeie o arquivo para teste.mp4) na pasta **assets/in**
+2. verifique se tem arquivo na pasta **assets/out**. Se tiver, pode excluir
+3. Abra o arquivo config.json e verifique se quer mudar alguma configuração
+4. Na pasta raiz do projeto, usando o prompt de comando ou bash, digite o comando abaixo para instalar as dependências necessárias (lembrando que precisa ter o pythonmais recente instalado)
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Ainda no prompt de comando ou bash, acesse a pasta src e execute o comando do python para iniciar a aplicação
+
+```bash
+cd src
+python main.py
+```
+
+Obs.: Poderá também debugar pela IDE como o VsCode, apontando a execução para o arquivo main.py
+
 ### Documentação de apoio de
 
 - [OpenCV](https://docs.opencv.org/4.x/)
